@@ -1,8 +1,8 @@
-# Ciphers
+# ciphers_collections  [![License](https://img.shields.io/badge/License-MIT-green)](https://github.com/Jaco020/ciphers_collections/blob/master/LICENSE) [![Version](https://img.shields.io/badge/Python-3.8-blue)](https://www.python.org/downloads/release/python-380/)
 
-Encrypt and Decrypt message with different kind of ciphers
+ciphers_collections is Python implemantation of different ciphers. Find one for yourself.
 
-## Curret Ciphers  
+## Current Ciphers  
 - Caesar cipher  
 - Rail fence cipher  
 - Playfair cipher  
@@ -13,11 +13,9 @@ For documentation see here [Official documentation](https://github.com/Jaco020/C
 
 For sample codes, please visit [Examples Codes](https://github.com/Jaco020/Ciphers/tree/master/exampl)
 
-## Status
+## Status  [![Active](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/Jaco020/ciphers_collections)
 Active - New ciphers will be added near future
 
 ## Compatibility
 
-Only tested on Python 3.8 on Windows
-
-
+Code was written in Python 3.8 but should work on other Python 3 versions(not tested)
