@@ -24,8 +24,10 @@
 `  fence_cipher_decrypt(message you want to decrypt, height of fence(number))` 
 
 ### Playfair cipher  
+**if message is uneven it will append X in the end**
 - Encrypt message by playfair cipher  
 `  playfair_encrypt(message you want to encrypt, key)`  
 
 - Decrypt message by playfair cipher  
-`  playfair_decrypt(message you want to decrypt, key)`
+`  playfair_decrypt(message you want to decrypt, key)`  
+  
