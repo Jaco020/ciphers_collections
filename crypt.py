@@ -7,7 +7,7 @@ all_symbols = string.printable + " " + "\n"
 
 
 def check_message(message):
-    """Check if message is correct - used by all other cipher functions"""
+    """Check if message is correct - used by some cipher functions"""
     for check in message:
         if check not in all_letters:
             print("Error - Message can only contain 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' letters")  # check if message is Correct
@@ -16,7 +16,7 @@ def check_message(message):
 
 def check_key_nr(number):
     """Check if key number is correct - used by functions that require key number"""
-    if number != int:
+    if not isinstance(number, int):
         print("Error - key is not int")  # check if message is Correct
         exit()
 
@@ -41,7 +41,6 @@ def reverse_array(active_array):
 def caesar_encrypt(text_encrypt, key_number):
     """ Encrypt message by caesar cipher
     caesar_encrypt(message you want to encrypt, transition of letters (number) )"""
-    check_message(text_encrypt)
     check_key_nr(key_number)
     if key_number > 26:
         print("Alphabet is only 26 in length")
@@ -66,7 +65,6 @@ def caesar_encrypt(text_encrypt, key_number):
 def caesar_decrypt(text_encrypt, key_number):
     """ Decrypt message by caesar cipher
     caesar_decrypt(message you want to decrypt, transition of letters (number) )"""
-    check_message(text_encrypt)
     check_key_nr(key_number)
     if key_number >= 26:
         print("Trans number is higher than one cycle")
@@ -92,7 +90,6 @@ def caesar_decrypt(text_encrypt, key_number):
 def fence_cipher_encrypt(text_encrypt, key_number):
     """ Encrypt message by fence cipher
     fence_cipher_encrypt(message you want to encrypt, height of fence(number))"""
-    check_message(text_encrypt)
     check_key_nr(key_number)
 
     message = []
@@ -118,7 +115,6 @@ def fence_cipher_encrypt(text_encrypt, key_number):
 def fence_cipher_decrypt(text_encrypt, key_number):
     """ Decrypt message by fence cipher
     fence_cipher_decrypt(message you want to decrypt, height of fence(number))"""
-    check_message(text_encrypt)
     check_key_nr(key_number)
 
     message = []
@@ -170,6 +166,8 @@ def playfair_encrypt(text_encrypt, key):
             print("Error - Key can only contain 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' letters")  # check if key is Correct
             exit()
 
+    if int(len(text_encrypt)) % 2 != 0:
+        text_encrypt = text_encrypt + "X"
     text_encrypt = text_encrypt.upper()
     key = key.upper()
     text_encrypt = text_encrypt.replace("J", "I")
@@ -242,7 +240,8 @@ def playfair_decrypt(text_encrypt, key):
         elif check not in all_letters:
             print("Error - Key can only contain 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' letters")  # check if key is Correct
             exit()
-
+    if int(len(text_encrypt)) % 2 != 0:
+        text_encrypt = text_encrypt + "X"
     text_encrypt = text_encrypt.upper()
     key = key.upper()
     text_encrypt = text_encrypt.replace("J", "I")
