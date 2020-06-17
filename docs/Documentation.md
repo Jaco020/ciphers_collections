@@ -10,7 +10,7 @@
  
   ## Step 2. Use Ciphers commands
 ### Caesar cipher  
-
+**Doesn't encrypt symbols other than letters**  
 - Encrypt message by caesar cipher  
 `caesar_encrypt(message you want to encrypt, transition of letters (number) )`     
 
@@ -24,10 +24,27 @@
 `  fence_cipher_decrypt(message you want to decrypt, height of fence(number))` 
 
 ### Playfair cipher  
-**if message is uneven it will append X in the end**
+**If message is uneven it will append X in the end**  
+**You can only use letters in message**  
+
 - Encrypt message by playfair cipher  
 `  playfair_encrypt(message you want to encrypt, key)`  
 
 - Decrypt message by playfair cipher  
 `  playfair_decrypt(message you want to decrypt, key)`  
+### Bacon's cipher  
+**You can only use letters in message**
+- Encrypt message by bacon's cipher (26 letter version)  
+`  bacon_encrypt(message you want to encrypt)`  
+
+- Decrypt message by bacon's cipher  
+`  bacon_decrypt(message you want to decrypt)`   
+
+### Bifid cipher  
+**You can only use letters in message**
+- Encrypt message by bifid cipher
+`  bifid_encrypt(message you want to encrypt)`  
+
+- Decrypt message by bifid cipher
+`  bifid_decrypt(message you want to decrypt)`  
   
