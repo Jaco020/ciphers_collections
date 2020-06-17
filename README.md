@@ -3,9 +3,11 @@
 ciphers_collections is Python implementation of different ciphers. Find one for yourself.
 
 ## Current Ciphers  
-- Caesar cipher  
+- Bifid cipher  
 - Rail fence cipher  
-- Playfair cipher  
+- Playfair cipher 
+
+To see all cipher list click [here](https://github.com/Jaco020/ciphers_collections/blob/master/docs/ciphers_list)
 
 ## Usage and Instructions
 
