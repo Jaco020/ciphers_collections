@@ -42,9 +42,26 @@
 
 ### Bifid cipher  
 **You can only use letters in message**
-- Encrypt message by bifid cipher
+- Encrypt message by bifid cipher  
 `  bifid_encrypt(message you want to encrypt)`  
 
-- Decrypt message by bifid cipher
+- Decrypt message by bifid cipher  
 `  bifid_decrypt(message you want to decrypt)`  
-  
+
+### Vernam cipher  
+**You can only use letters in message**  
+**Key must be equal or longer than message (Spaces don't count)**
+- Encrypt message by vernam cipher  
+`  vernam_encrypt(message you want to encrypt, key)`  
+
+- Decrypt message by vernam cipher  
+`  vernam_decrypt(message you want to decrypt, key)` 
+
+### Vigenere cipher  
+**You can only use letters in message**
+- Encrypt message by vigenere cipher  
+`  vigenere_encrypt(message you want to encrypt, key)`  
+
+- Decrypt message by vigenere cipher  
+`  vigenere_decrypt(message you want to decrypt, key)` 
+ 
