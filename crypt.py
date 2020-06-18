@@ -11,7 +11,7 @@ def check_message(message):
     exceptions = [" ", "\n"]
     for check in message:
         if check not in all_letters and check not in exceptions:
-            print("Error - Message can only contain 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' letters")  # check if message is Correct
+            print("Error - Message or key contain symbols other than 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' letters")  # check if message is Correct
             exit()
 
 
@@ -56,20 +56,17 @@ def caesar_encrypt(text_encrypt, key_number):
     if key_number > 26:
         print("Alphabet is only 26 in length")
         exit()
+    from collections import deque
     message = []
+    text_encrypt = text_encrypt.upper()
+    d = deque(up_letters)  # letter list
+    d.rotate(-key_number)
     for letter in text_encrypt:
-        if -1 != up_letters.find(letter):
-            location = up_letters.find(letter)
-            if location == 25:
-                location = -1
-            message.append(up_letters[location+key_number])
-        elif -1 != low_letters.find(letter):
-            location = low_letters.find(letter)
-            if location == 25:
-                location = -1
-            message.append(low_letters[location + key_number])
-        else:
+        if letter not in up_letters:
             message.append(all_symbols[all_symbols.find(letter)])
+        else:
+            true_location = up_letters.find(letter)
+            message.append(d[true_location])
     return ''.join(message)
 
 
@@ -79,24 +76,20 @@ def caesar_decrypt(text_encrypt, key_number):
     Doesn't encrypt symbols other than letters
     """
     check_key_nr(key_number)
-    if key_number >= 26:
-        print("Trans number is higher than one cycle")
+    if key_number > 26:
+        print("Alphabet is only 26 in length")
         exit()
+    from collections import deque
     message = []
-    key_number = 0 - key_number
+    text_encrypt = text_encrypt.upper()
+    d = deque(up_letters)  # letter list
+    d.rotate(key_number)
     for letter in text_encrypt:
-        if -1 != up_letters.find(letter):
-            location = up_letters.find(letter)
-            if location == 0:
-                location = 26
-            message.append(up_letters[location+key_number])
-        elif -1 != low_letters.find(letter):
-            location = low_letters.find(letter)
-            if location == 0:
-                location = 26
-            message.append(low_letters[location + key_number])
-        else:
+        if letter not in up_letters:
             message.append(all_symbols[all_symbols.find(letter)])
+        else:
+            true_location = up_letters.find(letter)
+            message.append(d[true_location])
     return ''.join(message)
 
 
@@ -428,5 +421,159 @@ def bifid_decrypt(text_encrypt):
         encrypted_letter = array[position_list[position]][position_list[position + len(text_encrypt)]]  # second step in bifid cipher
         message.append(encrypted_letter)
     for space in space_list:
+        message.insert(space, " ")
+    return ''.join(message)
+
+
+def vernam_encrypt(text_encrypt, key):
+    """ Encrypt message by vernam cipher
+        vernam_encrypt(message you want to encrypt, key word)
+        You can only use letters in message
+        Key must be equal or longer than message (Spaces don't count)
+        """
+    check_message(text_encrypt)
+    check_message(key)
+    text_encrypt, space_cords = delete_spaces(text_encrypt)
+    key, key_space_cords = delete_spaces(key)
+    if len(key) <= len(text_encrypt):
+        print("Key must be equal or longer than message (Spaces don't count)")
+        exit()
+    text_encrypt = text_encrypt.upper()
+    key = key.upper()
+    message = []
+    text_encrypt_cords = []
+    key_cords = []
+    for letter in range(len(text_encrypt)):
+        text_encrypt_cords.append(up_letters.find(text_encrypt[letter]))
+        key_cords.append(up_letters.find(key[letter]))
+    for index in range(len(text_encrypt)):
+        cord1 = text_encrypt_cords[index]
+        cord2 = key_cords[index]
+        total = cord1 + cord2
+        if total > 25:
+            if cord1 > cord2:
+                difference = 25 - cord1
+                total = -1 + (cord2 - difference)
+            else:
+                difference = 25 - cord2
+                total = -1 + (cord1 - difference)
+        message.append(up_letters[total])
+    for space in space_cords:
+        message.insert(space, " ")
+    return ''.join(message)
+
+
+def vernam_decrypt(text_encrypt, key):
+    """ Decrypt message by vernam cipher
+        vernam_decrypt(message you want to decrypt, key word)
+        You can only use letters in message
+        Key must be equal or longer than message (Spaces don't count)
+        """
+    check_message(text_encrypt)
+    check_message(key)
+    text_encrypt, space_cords = delete_spaces(text_encrypt)
+    key, key_space_cords = delete_spaces(key)
+    if len(key) <= len(text_encrypt):
+        print("Key must be equal or longer than message (Spaces don't count)")
+        exit()
+    text_encrypt = text_encrypt.upper()
+    key = key.upper()
+    message = []
+    text_encrypt_cords = []
+    key_cords = []
+    for letter in range(len(text_encrypt)):
+        text_encrypt_cords.append(up_letters.find(text_encrypt[letter]))
+        key_cords.append(up_letters.find(key[letter]))
+    for index in range(len(text_encrypt)):
+        cord1 = text_encrypt_cords[index]
+        cord2 = key_cords[index]
+        total = cord1 - cord2
+        message.append(up_letters[total])
+    for space in space_cords:
+        message.insert(space, " ")
+    return ''.join(message)
+
+
+def vigenere_encrypt(text_encrypt, key):
+    """ Encrypt message by vigenere cipher
+        vigenere_encrypt(message you want to encrypt, key word)
+        You can only use letters in message
+        """
+    check_message(text_encrypt)
+    check_message(key)
+    text_encrypt, space_cords = delete_spaces(text_encrypt)
+    key, key_space_cords = delete_spaces(key)
+    text_encrypt = text_encrypt.upper()
+    key = key.upper()
+
+    from collections import deque
+    key_index = 0
+    while len(key) <= len(text_encrypt):
+        key += key[key_index]
+        key_index += 1
+        if key_index == len(key):
+            key_index = 0
+
+    d = deque(up_letters)  # letter list
+    array = [["_" for xrow in range(26)] for ycolumn in range(26)]
+    rotate_nr = -1
+    message = []
+    text_encrypt_cords = []
+    key_cords = []
+    for ycolumn in range(26):
+        for xrow in range(26):
+            array[ycolumn][xrow] = d[xrow]
+        d.rotate(rotate_nr)
+    for letter in range(len(text_encrypt)):
+        text_encrypt_cords.append(up_letters.find(text_encrypt[letter]))
+        key_cords.append(up_letters.find(key[letter]))
+
+    for cord, letter in enumerate(text_encrypt):
+        message.append(array[text_encrypt_cords[cord]][key_cords[cord]])
+    for space in space_cords:
+        message.insert(space, " ")
+    return ''.join(message)
+
+
+def vigenere_decrypt(text_encrypt, key):
+    """ Decrypt message by vigenere cipher
+        vigenere_decrypt(message you want to decrypt, key word)
+        You can only use letters in message
+        """
+    check_message(text_encrypt)
+    check_message(key)
+    text_encrypt, space_cords = delete_spaces(text_encrypt)
+    key, key_space_cords = delete_spaces(key)
+    text_encrypt = text_encrypt.upper()
+    key = key.upper()
+
+    from collections import deque
+    key_index = 0
+    while len(key) <= len(text_encrypt):
+        key += key[key_index]
+        key_index += 1
+        if key_index == len(key):
+            key_index = 0
+
+    d = deque(up_letters)  # letter list
+    array = [["_" for xrow in range(26)] for ycolumn in range(26)]
+    rotate_nr = -1
+    message = []
+    text_encrypt_cords = []
+    key_cords = []
+    for ycolumn in range(26):
+        for xrow in range(26):
+            array[ycolumn][xrow] = d[xrow]
+        d.rotate(rotate_nr)
+    for letter in range(len(text_encrypt)):
+        text_encrypt_cords.append(up_letters.find(text_encrypt[letter]))
+        key_cords.append(up_letters.find(key[letter]))
+
+    for cord, letter in enumerate(text_encrypt):
+        key_cord = int(key_cords[cord])
+        key_array = array[key_cord]
+        encrypted_cord = key_array.index(text_encrypt[cord])
+        message.append(up_letters[encrypted_cord])
+    for space in space_cords:
         message.insert(space, " ")
     return ''.join(message)
