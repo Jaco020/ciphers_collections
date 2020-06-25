@@ -3,9 +3,9 @@
 ciphers_collections is Python implementation of different ciphers. Find one for yourself.
 
 ## Current Ciphers  
-- Bifid cipher  
-- Rail fence cipher  
-- Playfair cipher 
+- Enigma  
+- Vernam cipher  
+- Vigenere cipher
 
 To see all cipher list click [here](https://github.com/Jaco020/ciphers_collections/blob/master/docs/ciphers_list)
 
