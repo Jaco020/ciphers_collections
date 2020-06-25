@@ -11,7 +11,7 @@ def check_message(message):
     exceptions = [" ", "\n"]
     for check in message:
         if check not in all_letters and check not in exceptions:
-            print("Error - Message or key contain symbols other than 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' letters")  # check if message is Correct
+            print("Error - One of argument contain symbols other than 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' letters")
             exit()
 
 
@@ -577,3 +577,128 @@ def vigenere_decrypt(text_encrypt, key):
     for space in space_cords:
         message.insert(space, " ")
     return ''.join(message)
+
+
+class EnigmaSetup:
+    # rotor_list = [ I, II, III, IV, V, VI, VII, VIII ]
+    rotor_list = ["EKMFLGDQVZNTOWYHXUSPAIBRCJ", "AJDKSIRUXBLHWTMCQGZNPYFVOE", "BDFHJLCPRTXVZNYEIWGAKMUSQO"
+                  , "ESOVPZJAYQUIRHXLNFTGKDCMWB", "VZBRGITYUPSDNHLXAWMJQOFECK", "JPGVOUMFYQBENHZRDKASXLICTW"
+                  , "NZJHGRCXMYSWBOUFAIVLPEKQDT", "FKQHTLXOCBJSPDZRAMEWNIUYGV"]
+    # notch_list = [ I, II, III, IV, V, VI, VII, VIII ]
+    notch_list = ["Q", "E", "V", "J", "Z", "ZM", "ZM", "ZM"]
+    # reflector_list = [ UKW-A, UKW-B, UKW-C ]
+    reflector_list = ["EJMZALYXVBWFCRQUONTSPIKHGD", "YRUHQSLDPXNGOKMIEBFZCWVJAT", "FVPJIAOYEDRZXWGCTKUQSBNMHL"]
+
+    def __init__(self, rotor1, rotor2, rotor3, reflector):
+        self.rotor1 = EnigmaSetup.rotor_list[rotor1-1]
+        self.rotor2 = EnigmaSetup.rotor_list[rotor2 - 1]
+        self.rotor3 = EnigmaSetup.rotor_list[rotor3 - 1]
+
+        self.notch2 = EnigmaSetup.notch_list[rotor2 - 1]
+        self.notch3 = EnigmaSetup.notch_list[rotor3 - 1]
+
+        self.reflector = EnigmaSetup.reflector_list[reflector-1]
+
+    def enigma_cipher(self, message, key, ring_setting, plugboard):
+
+        def check_values(cmessage, ckey, cring_setting, cplugboard):
+            """Check if arguments are correct"""
+            check_message(ckey)
+            check_message(cring_setting)
+            check_message(cplugboard)
+            if len(key) != 3 or len(cring_setting) != 3:
+                print("This is 3 rotor Enigma, key and ring setting must contain 3 letters")
+                exit()
+            for check in cplugboard:
+                if 1 < cplugboard.count(check) and check != " ":
+                    print("Wrong plugboard - same letter can't occurs 2 times")
+                    exit()
+            return cmessage.upper(), ckey.upper(), cring_setting.upper(), cplugboard.upper()
+        message, key, ring_setting, plugboard = check_values(message, key, ring_setting, plugboard)
+        coded_message = ""
+        from collections import deque
+        # rotor1 + alphabet1, rotor2 + alphabet2, rotor3 + alphabet3
+        alphabet_list = [deque(up_letters), deque(up_letters), deque(up_letters)]
+        rotor_list = [self.rotor1, self.rotor2, self.rotor3]
+        reflector = {}
+
+        # set reflector
+        for i_letter in range(26):
+            reflector[up_letters[i_letter]] = self.reflector[i_letter]
+
+        # set ring settings
+        for index, letter in enumerate(ring_setting):
+            letter_pos = up_letters.find(letter)
+            d_caesar_rotor = deque(caesar_encrypt(rotor_list[index], letter_pos))
+            d_caesar_rotor.rotate(letter_pos)
+            rotor_list[index] = d_caesar_rotor
+
+        # set ring positions ---> key = ring_position
+        for index, letter in enumerate(key):
+            shift_up = up_letters.find(letter)
+            alphabet_list[index].rotate(-shift_up)
+            rotor_list[index].rotate(-shift_up)
+
+        # Convert plugboard to dictionary
+        plugboard = plugboard.upper().replace(" ", "")
+        plugboard_dict = {}
+        for pair in range(0, len(plugboard), 2):
+            plugboard_dict[plugboard[pair]] = plugboard[pair + 1]
+            plugboard_dict[plugboard[pair + 1]] = plugboard[pair]
+
+        for letter in message:
+            if letter not in up_letters:
+                coded_message += letter
+            else:
+                # ========== Rotors are rotated before letter encryption =================
+
+                if alphabet_list[2][0] in self.notch3:
+                    if alphabet_list[1][0] in self.notch2:
+                        # left rotor is rotated
+                        rotor_list[0].rotate(-1)
+                        alphabet_list[0].rotate(-1)
+                    # middle rotor is rotated
+                    rotor_list[1].rotate(-1)
+                    alphabet_list[1].rotate(-1)
+                else:
+                    # Check double step sequence
+                    if alphabet_list[1][0] in self.notch2:
+                        rotor_list[1].rotate(-1)
+                        alphabet_list[1].rotate(-1)
+                        rotor_list[0].rotate(-1)
+                        alphabet_list[0].rotate(-1)
+
+                # Right rotor is rotated before each letter
+                rotor_list[2].rotate(-1)
+                alphabet_list[2].rotate(-1)
+                # ============================================================================
+
+                # Plugboard 1 switch
+                if letter in plugboard_dict.keys():
+                    letter = plugboard_dict[letter]
+
+                letter_cord = up_letters.index(letter)
+
+                # from letter to reflector - Wheel 3, Wheel 2, Wheel 1
+                for current_rotor in range(2, -1, -1):
+                    rotor_letter = rotor_list[current_rotor][letter_cord]
+                    letter_cord = alphabet_list[current_rotor].index(rotor_letter)
+
+                # ================== reflector  ================================
+                reflector_key = up_letters[letter_cord]  # check letter in alphabet with rotor cords
+                reflector_value = reflector[reflector_key]
+                letter_cord = up_letters.find(reflector_value)
+                # ================== reflector  ================================
+
+                # from reflector to encrypted letter -  Wheel 1,  Wheel 2,  Wheel 3
+                for current_rotor in range(3):
+                    rotor_letter = alphabet_list[current_rotor][letter_cord]
+                    letter_cord = rotor_list[current_rotor].index(rotor_letter)
+                encrypted_letter = up_letters[letter_cord]
+
+                # Plugboard 2 switch
+                if encrypted_letter in plugboard_dict.keys():
+                    encrypted_letter = plugboard_dict[up_letters[letter_cord]]
+
+                coded_message += encrypted_letter
+        return coded_message
