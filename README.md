@@ -15,8 +15,8 @@ For documentation see here [Official documentation](https://github.com/Jaco020/C
 
 For sample codes, please visit [Examples Codes](https://github.com/Jaco020/Ciphers/tree/master/exampl)
 
-## Status  [![Active](https://img.shields.io/badge/Status-Active-brightgreen)](https://github.com/Jaco020/ciphers_collections)
-Active - New ciphers will be added near future
+## Status  [![Dead](https://img.shields.io/badge/Status-Dead-red)](https://github.com/Jaco020/ciphers_collections)
+Dead - Currently working on something else
 
 ## Compatibility
 
